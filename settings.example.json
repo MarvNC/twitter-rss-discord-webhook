@@ -1,0 +1,13 @@
+{
+  "settings": {
+    "interval_minutes": "5",
+    "deepl_api_key": "apikey"
+  },
+  "feeds": [
+    {
+      "rss": "https://nitter.poast.org/Reuters/rss",
+      "webhook": "https://discord.com/api/webhooks/asdfg",
+      "translate": "en"
+    }
+  ]
+}
