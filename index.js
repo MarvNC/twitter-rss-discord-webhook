@@ -6,12 +6,13 @@ const parser = new rss();
 
 let lastUpdated = new Date();
 let latestCheckedFeedItemDate = lastUpdated;
-const DEBUG = true;
+const DEBUG = false;
 if (DEBUG) {
   console.log('DEBUG MODE');
   // move lastUpdated back
-  lastUpdated = new Date(lastUpdated.getTime() - 20 * 60 * 1000);
+  // lastUpdated = new Date(lastUpdated.getTime() - 20 * 60 * 1000);
   latestCheckedFeedItemDate = lastUpdated;
+  settings.interval_minutes = 0.5;
 }
 
 setInterval(() => {
@@ -86,7 +87,7 @@ async function buildMessageFromFeed(feedItem, feed) {
   fxTwitterLink.hash = '';
 
   // Build the message
-  messageString += `${creator} posted on <t:${itemDate.valueOf()/1000}>\n`;
+  messageString += `${creator} posted on <t:${itemDate.valueOf() / 1000}>\n`;
   messageString += title + '\n';
   messageString += fxTwitterLink + '\n';
 
