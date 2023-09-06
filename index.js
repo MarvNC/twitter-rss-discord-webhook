@@ -5,16 +5,19 @@ const { settings, feeds } = require('./settings.json');
 const parser = new rss();
 
 let lastUpdated = new Date();
+let latestCheckedFeedItemDate = lastUpdated;
+const DEBUG = true;
+if (DEBUG) {
+  console.log('DEBUG MODE');
+  // move lastUpdated back
+  lastUpdated = new Date(lastUpdated.getTime() - 20 * 60 * 1000);
+  latestCheckedFeedItemDate = lastUpdated;
+}
 
 setInterval(() => {
-  // Get the current time
-  const currentTime = new Date();
-  // Check if the current time is past the last updated time + the interval
-  if (currentTime.getTime() > lastUpdated.getTime() + settings.interval_minutes * 60 * 1000) {
-    checkAllFeeds();
-    // Update the last updated time
-    lastUpdated = currentTime;
-  }
+  checkAllFeeds();
+  // Update the last updated time
+  lastUpdated = latestCheckedFeedItemDate;
 }, 60 * 1000 * settings.interval_minutes);
 checkAllFeeds();
 
@@ -28,31 +31,20 @@ function handleFeed(feed) {
       console.error(err);
       return;
     }
-    // iterate through feed items from oldest to newest
+    // Iterate through feed items from oldest to newest
     for (const item of parsed.items.reverse()) {
+      const itemDate = new Date(item.pubDate);
+      // console.log(`Checking ${item.title} from ${itemDate} against ${lastUpdated}...`);
       // Check if the item is newer than the last updated time
-      if (new Date(item.pubDate) > lastUpdated) {
-        // Send the message
-        await sendMessage(item, feed);
+      if (itemDate > lastUpdated) {
+        handleFeedItem(item, feed);
+        latestCheckedFeedItemDate = Math.max(latestCheckedFeedItemDate, itemDate);
       }
     }
-    
-    // const messageString = await buildMessageFromFeed(parsed, feed);
-    // // Send the message
-    // axios
-    //   .post(feed.webhook, {
-    //     content: messageString,
-    //   })
-    //   .then(() => {
-    //     console.log(`Sent ${title} to ${feed.webhook}`);
-    //   })
-    //   .catch((err) => {
-    //     console.error(err);
-    //   });
   });
 }
 
-function sendMessageToWebhook(message, webhook) {
+function sendMessageToWebhook(message = '', webhook) {
   axios
     .post(webhook, {
       content: message,
@@ -66,9 +58,18 @@ function sendMessageToWebhook(message, webhook) {
 }
 
 function checkAllFeeds() {
+  console.log(
+    `Checking feeds at ${new Date()}; last updated at ${lastUpdated} and latest checked feed item date at ${latestCheckedFeedItemDate}...`
+  );
   for (const feed of feeds) {
     handleFeed(feed);
   }
+}
+
+// Reads and sends a message for a feed item
+async function handleFeedItem(feedItem, feed) {
+  const message = await buildMessageFromFeed(feedItem, feed);
+  sendMessageToWebhook(message, feed.webhook);
 }
 
 async function buildMessageFromFeed(feedItem, feed) {
@@ -77,12 +78,16 @@ async function buildMessageFromFeed(feedItem, feed) {
   const title = feedItem.title;
   const creator = feedItem.creator;
   const link = feedItem.link;
-  messageString += title + '\n';
+  const itemDate = new Date(feedItem.pubDate);
 
   // replace link with fxtwitter
   const fxTwitterLink = new URL(link);
   fxTwitterLink.hostname = 'fxtwitter.com';
   fxTwitterLink.hash = '';
+
+  // Build the message
+  messageString += `${creator} posted on <t:${itemDate.valueOf()/1000}>\n`;
+  messageString += title + '\n';
   messageString += fxTwitterLink + '\n';
 
   // add translation if needed
@@ -91,6 +96,7 @@ async function buildMessageFromFeed(feedItem, feed) {
     const translation = await translate(feedItem.contentSnippet, feed.translate);
     if (translation) messageString += `\`\`\`${translation}\`\`\`\n`;
   }
+  return messageString;
 }
 
 // Translate a string and return the translation
