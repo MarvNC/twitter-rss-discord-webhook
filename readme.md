@@ -1,6 +1,6 @@
-# twitter-rss-discord-webhook
+# Twitter to Discord Webhook
 
-This script posts Twitter feeds to a Discord webhook via a Nitter RSS feed. Notably, this script supports translation of the tweets using DeepL and replaces the tweet links with fxtwitter.com for better Discord embeds. Note that Nitter RSS is not supported by every instance of Nitter - you can view a list of supported instances [here](https://status.d420.de/).
+This script posts Twitter feeds to a Discord webhook via a Nitter RSS feed. Notably, this script supports translation of the tweets using DeepL and replaces the tweet links with [fxtwitter/FixTweet](https://github.com/FixTweet/FixTweet) for better Discord embeds. Note that Nitter RSS is not supported by every instance of Nitter - you can view a list of supported instances [here](https://status.d420.de/).
 
 ## Usage
 
