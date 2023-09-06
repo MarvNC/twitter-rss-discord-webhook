@@ -29,12 +29,12 @@ The `settings.json` file contains the following configuration:
 }
 ```
 
-## Settings
+### Settings
 
 - `interval_minutes` - How often to check feeds, in minutes. Default is 5.
 - `deepl_api_key` - API key for DeepL translation. Get one for free at https://www.deepl.com/pro-api/.
 
-## Feeds
+### Feeds
 
 The `feeds` array contains objects with the following properties:
 
