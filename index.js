@@ -120,9 +120,15 @@ async function translate(text, lang) {
   // fetch and return response text
   const response = await fetch('https://api-free.deepl.com/v2/translate', requestOptions);
   const result = await response.text();
-  const json = JSON.parse(result);
-  if (json.translations[0].detected_source_language.toLowerCase() === lang.toLowerCase()) {
+  try {
+    const json = JSON.parse(result);
+    // if the detected source language is the same as the target language, return null
+    if (json.translations[0]?.detected_source_language.toLowerCase() === lang.toLowerCase()) {
+      return null;
+    }
+    return json.translations[0]?.text;
+  } catch (error) {
+    console.error(error);
     return null;
   }
-  return json.translations[0].text;
 }
