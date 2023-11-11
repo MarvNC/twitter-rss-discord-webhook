@@ -1,6 +1,7 @@
 {
   "settings": {
     "interval_minutes": "5",
+    "seconds_between_feeds": "15",
     "deepl_api_key": "apikey"
   },
   "feeds": [

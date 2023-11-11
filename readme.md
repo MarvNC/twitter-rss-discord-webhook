@@ -20,6 +20,7 @@ The `settings.json` file contains the following configuration:
 {
   "settings": {
     "interval_minutes": "5",
+    "seconds_between_feeds": "15",
     "deepl_api_key": "apikey"
   },
   "feeds": [
@@ -35,6 +36,7 @@ The `settings.json` file contains the following configuration:
 ### Settings
 
 - `interval_minutes` - How often to check feeds, in minutes. Default is 5.
+- `seconds_between_feeds` - How long to wait between checking each feed, in seconds. Default is 15. This is to prevent rate limiting.
 - `deepl_api_key` - API key for DeepL translation. Get one for free at https://www.deepl.com/pro-api/.
 
 ### Feeds
