@@ -63,7 +63,10 @@ function checkAllFeeds() {
     `Checking feeds at ${new Date()}; last updated at ${lastUpdated} and latest checked feed item date at ${latestCheckedFeedItemDate}...`
   );
   for (const feed of feeds) {
-    handleFeed(feed);
+    // wait settings.seconds_between_feeds seconds between each feed
+    setTimeout(() => {
+      handleFeed(feed);
+    }, settings.seconds_between_feeds * 1000);
   }
 }
 
